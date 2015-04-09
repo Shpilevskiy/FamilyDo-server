@@ -1,4 +1,10 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, flash, redirect, request, session, abort
+from sqlalchemy.orm import sessionmaker
+from tabledef import *
+
+import os
+
+engine = create_engine("sqlite:///tutorial.db", echo=True)
 app = Flask(__name__)
 
 
@@ -41,13 +47,43 @@ def show_note(note_id):
 
 
 @app.route("/")
-def hello():
-    pass
-    # return a1.render_to_html()
+def home():
+    if not session.get('logged_in'):
+        return render_template("login.html")
+    else:
+        return "Hello, user.<a href='/logout'>Logout</a>"
+
+
+@app.route("/login", methods=['POST'])
+def do_admin_login():
+    print("TEST_DEBUG!")
+    POST_USERNAME = str(request.form["username"])
+    POST_PASSWORD = str(request.form["password"])
+    print("Login is here!")
+    Session = sessionmaker(bind=engine)
+    s = Session()
+    query = s.query(User).filter(User.username.in_([POST_USERNAME]), User.password.in_([POST_PASSWORD]) )
+    result = query.first()
+    print(result)
+    if result:
+        session["logged_in"] = True
+    else:
+        print("Wrong pass")
+        flash("Wrong password.")
+
+    return home()
+
+
+@app.route("/logout")
+def logout():
+    session["logged_in"] = False
+    return home()
+
 
 if __name__ == "__main__":
-    notebook = Notebook()
-    notebook.add_note(Note("Some text", "MrLokans"))
-    notebook.add_note(Note("Another text", "Arararat"))
+    app.secret_key = os.urandom(12)
+    # notebook = Notebook()
+    # notebook.add_note(Note("Some text", "MrLokans"))
+    # notebook.add_note(Note("Another text", "Arararat"))
 
     app.run()

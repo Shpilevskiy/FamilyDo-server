@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, url_for
 app = Flask(__name__)
 
 
@@ -36,7 +36,8 @@ class Note(object):
 
 @app.route("/note/<int:note_id>")
 def show_note(note_id):
-    return notebook.get_note_by_id(note_id).render_to_html()
+    note = notebook.get_note_by_id(note_id)
+    return render_template("note.html", author=note.author, text=note.text)
 
 
 @app.route("/")

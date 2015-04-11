@@ -38,8 +38,15 @@
                     newBlock = newBlock + text + end;
                     $(".actual-tasks").append(newBlock);
                     $('.new-note-input').val(""); 
+                    $.ajax({
+                        type: "POST",
+                        url: "http://localhost:5000/test_post",
+                        data: {"note_text": inputText, "author": "Andrew"},
+                        dataType: 'jsonp'
+                    });
                 }           
             }
+
 
             else
             {   

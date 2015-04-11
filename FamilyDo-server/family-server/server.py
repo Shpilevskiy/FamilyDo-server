@@ -74,6 +74,18 @@ def do_admin_login():
     return home()
 
 
+@app.route("/test_post", methods=['POST', 'GET'])
+def test_post():
+    note_text = request.args.get("note_text")
+    author = request.args.get("author")
+    Session = sessionmaker(bind=engine)
+    s = Session()
+    note = TODO_List_Entry(author, note_text)
+    s.add(note)
+    s.commit()
+    # print(note)
+
+
 @app.route("/logout")
 def logout():
     session["logged_in"] = False

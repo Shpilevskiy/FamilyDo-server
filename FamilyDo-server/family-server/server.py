@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, session, abort
 from sqlalchemy.orm import sessionmaker
 from tabledef import *
-
+from collections import namedtuple
 import os
 
 engine = create_engine("sqlite:///tutorial.db", echo=True)
@@ -52,6 +52,26 @@ def home():
         return render_template("login.html")
     else:
         return "Hello, user.<a href='/logout'>Logout</a>"
+
+
+class Test:
+    def __init__(self, name, text):
+        self.name = name
+        self.text = text
+
+
+@app.route("/notes")
+def show_notes_page():
+    print("Check!")
+    Note_Test = namedtuple('Note_Test', ['author', 'note_text'])
+    print(Note_Test("Andrew", "Some random note.").author)
+    Session = sessionmaker(bind=engine)
+    s = Session()
+    print(s.query(TODO_List_Entry))
+    notes = [Note_Test(note.author, note.note_text) for note in s.query(TODO_List_Entry).order_by(TODO_List_Entry.id)]
+    
+    print(notes)
+    return render_template("notes.html", notes=notes)
 
 
 @app.route("/login", methods=['POST'])

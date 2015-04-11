@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="static/notes_style.css">
+    <script type="text/javascript" src="static/jquery-2.1.3.min.js"></script>
+</head>
+<body>
+    <script>
+        var newTask = function(){
+            console.log("Hello!");
+            // $(".list-container").append("<h1>Hello!</h1>");
+
+        }
+
+
+
+        $(document).ready(function(){
+
+        });    
+
+
+        $("test-text").keydown(function(){
+            console.log("Activated event!");
+        });
+
+        var updateSmth = function(e){
+            e = e || window.event;
+            var inputText = $('.new-note-input').val()
+            if (e.keyCode == 10 || e.keyCode == 13)
+            {
+                if (! inputText == "")
+                {
+                    var newBlock = "<div class='task-container'><input type='checkbox'><div class='note-text'>"
+                    var text = inputText;
+                    var end = "</div></div>";
+                    newBlock = newBlock + text + end;
+                    $(".actual-tasks").append(newBlock);
+                    $('.new-note-input').val(""); 
+                    $.ajax({
+                        type: "POST",
+                        url: "http://localhost:5000/test_post",
+                        data: {"note_text": inputText, "author": "Andrew"},
+                        dataType: 'jsonp'
+                    });
+                }           
+            }
+
+
+            else
+            {   
+                // console.log(event.keyCode);
+            }
+        }
+
+    </script>
+    <div class="list-container">
+        <input type="text" class="new-note-input" placeholder="Enter new note" onkeydown="updateSmth(event);" >
+
+        <div class="actual-tasks">
+            {% for note in notes %}
+            <div class="task-container">
+                <input type="checkbox">
+                <div class="note-text">{{ note.note_text }}</div>
+                <div class="note-deleter">del</div>
+            </div>
+            {% else %}
+            {% endfor %}
+
+
+        </div>
+    </div>
+
+</body>
+</html>

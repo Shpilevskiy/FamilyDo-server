@@ -66,3 +66,9 @@ body {
 .new-note-input > input {
     /*width: 90%;*/
 }
+
+.note-deleter {
+    display: inline-block;
+    position: relative;
+    right: 2px;
+}
